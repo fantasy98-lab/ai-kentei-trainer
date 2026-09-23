@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#22306B">
+<title>AI検定トレーナー</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Kaisei+Decol:wght@500;700&family=Zen+Kaku+Gothic+New:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#E9EDF2; --surface:#FFFFFF; --ink:#1C2340; --muted:#5B6478; --line:#CBD2DD;
+  --cover:#22306B; --cover-ink:#F2E7C9; --stamp:#B23A5B; --ok:#2F7D5C; --ng:#B8412F;
+  --ok-bg:#E3F2EA; --ng-bg:#F8E6E2;
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px);
+  padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#10152A; --surface:#1A2140; --ink:#E6E9F2; --muted:#A2AAC0; --line:#2E3760;
+    --cover:#2B3A80; --cover-ink:#F2E7C9; --stamp:#E0708F; --ok:#5CC08E; --ng:#E57368;
+    --ok-bg:#16352A; --ng-bg:#3A1E1C;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#10152A; --surface:#1A2140; --ink:#E6E9F2; --muted:#A2AAC0; --line:#2E3760;
+  --cover:#2B3A80; --cover-ink:#F2E7C9; --stamp:#E0708F; --ok:#5CC08E; --ng:#E57368;
+  --ok-bg:#16352A; --ng-bg:#3A1E1C;
+}
+*,*::before,*::after{box-sizing:inherit}
+html{height:100%;scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;min-height:100%;background:var(--bg);color:var(--ink);
+  font-family:"Zen Kaku Gothic New","Hiragino Sans","Noto Sans JP",system-ui,sans-serif;
+  font-size:16px;line-height:1.7;-webkit-text-size-adjust:100%}
+button{font:inherit;color:inherit;cursor:pointer}
+button:focus-visible,select:focus-visible{outline:3px solid var(--stamp);outline-offset:2px}
+.wrap{max-width:560px;margin:0 auto;padding:16px 16px 40px}
+.bar{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:16px}
+.bar h1{font-family:"Kaisei Decol",serif;font-size:1.15rem;margin:0;letter-spacing:.04em}
+.bar select{background:var(--surface);color:var(--ink);border:1px solid var(--line);border-radius:8px;padding:6px 8px;font:inherit;font-size:.9rem}
+
+/* Passport cover */
+.cover{background:var(--cover);color:var(--cover-ink);border-radius:14px 22px 22px 14px;padding:22px 20px 20px;position:relative;overflow:hidden;
+  box-shadow:inset 10px 0 0 rgba(0,0,0,.18)}
+.cover::after{content:"";position:absolute;right:-40px;top:-40px;width:170px;height:170px;border:2px solid rgba(242,231,201,.25);border-radius:50%}
+.cover .exam{font-family:"Kaisei Decol",serif;font-size:1.6rem;line-height:1.3;margin:0 0 4px}
+.cover .sub{font-size:.85rem;opacity:.85;margin:0 0 18px}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;position:relative;z-index:1}
+.stats div{border-top:1px solid rgba(242,231,201,.35);padding-top:6px}
+.stats b{display:block;font-size:1.35rem;font-weight:700}
+.stats span{font-size:.75rem;opacity:.85}
+
+h2{font-family:"Kaisei Decol",serif;font-size:1.1rem;margin:28px 0 4px}
+.hint{color:var(--muted);font-size:.85rem;margin:0 0 12px}
+
+/* Stamp book */
+.stamps{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px}
+.stamp{background:var(--surface);border:1px dashed var(--line);border-radius:12px;padding:12px;text-align:left;display:flex;gap:10px;align-items:center;min-height:84px}
+.seal{flex:none;width:52px;height:52px;border-radius:50%;border:2.5px solid var(--stamp);color:var(--stamp);display:grid;place-items:center;
+  font-family:"Kaisei Decol",serif;font-weight:700;font-size:.8rem;line-height:1.1;text-align:center;transform:rotate(-12deg)}
+.seal.empty{border-style:dashed;opacity:.35}
+.seal.full{background:var(--stamp);color:var(--surface)}
+.stamp .t{font-size:.85rem;font-weight:700;line-height:1.35}
+.stamp .p{font-size:.75rem;color:var(--muted)}
+
+.modes{display:grid;gap:10px}
+.mode{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:14px 16px;text-align:left;display:flex;justify-content:space-between;align-items:center;gap:12px}
+.mode b{display:block}
+.mode small{color:var(--muted);font-size:.8rem}
+.mode:disabled{opacity:.45;cursor:not-allowed}
+.mode .n{font-family:"Kaisei Decol",serif;font-size:1.3rem;color:var(--stamp)}
+
+/* Quiz */
+.qhead{display:flex;justify-content:space-between;align-items:center;font-size:.85rem;color:var(--muted);margin-bottom:8px}
+.progress{height:6px;background:var(--line);border-radius:3px;overflow:hidden;margin-bottom:18px}
+.progress i{display:block;height:100%;background:var(--cover);transition:width .25s}
+.qtext{font-size:1.08rem;font-weight:500;margin:0 0 16px}
+.opts{display:grid;gap:10px}
+.opt{background:var(--surface);border:1.5px solid var(--line);border-radius:12px;padding:12px 14px;text-align:left;display:flex;gap:12px;align-items:flex-start;min-height:52px}
+.opt .k{flex:none;width:26px;height:26px;border-radius:50%;border:1.5px solid var(--muted);display:grid;place-items:center;font-size:.8rem;font-weight:700;margin-top:1px}
+.opt.ok{border-color:var(--ok);background:var(--ok-bg)}
+.opt.ok .k{background:var(--ok);border-color:var(--ok);color:var(--surface)}
+.opt.ng{border-color:var(--ng);background:var(--ng-bg)}
+.opt.ng .k{background:var(--ng);border-color:var(--ng);color:var(--surface)}
+.opt.picked{border-color:var(--cover)}
+.opt:disabled{cursor:default}
+.explain{margin-top:16px;background:var(--surface);border-left:4px solid var(--ok);border-radius:0 12px 12px 0;padding:12px 14px;font-size:.92rem}
+.explain.bad{border-left-color:var(--ng)}
+.explain b{display:block;margin-bottom:4px}
+.actions{display:flex;gap:10px;margin-top:18px}
+.btn{flex:1;border:none;border-radius:12px;padding:14px;font-weight:700;background:var(--cover);color:#fff}
+.btn.ghost{background:transparent;border:1.5px solid var(--line);color:var(--ink);font-weight:500}
+.timer{font-variant-numeric:tabular-nums;font-weight:700;color:var(--ink)}
+.timer.low{color:var(--ng)}
+
+/* Result */
+.score{text-align:center;padding:24px 0 8px}
+.score .big{font-family:"Kaisei Decol",serif;font-size:3.2rem;line-height:1;color:var(--stamp)}
+.score p{margin:8px 0 0;color:var(--muted)}
+.review{display:grid;gap:10px;margin-top:8px}
+.rv{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:12px 14px;font-size:.9rem}
+.rv .q{font-weight:500;margin-bottom:6px}
+.rv .a{color:var(--ok);font-weight:700}
+.rv .e{color:var(--muted);margin-top:4px}
+.foot{margin-top:28px;display:flex;justify-content:space-between;align-items:center;font-size:.8rem;color:var(--muted)}
+.foot button{background:none;border:none;color:var(--muted);text-decoration:underline;padding:4px}
+.empty-note{background:var(--surface);border:1px dashed var(--line);border-radius:12px;padding:20px;text-align:center;color:var(--muted)}
+@media (prefers-reduced-motion: reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<div class="wrap" id="app"></div>
+
+<script>
+/* ============ 問題データ ============
+   問題は data/*.json から読み込みます（Claude Codeのエージェントが更新）。 */
+const EXAM_FILES = {genai:"data/genai.json", "g-kentei":"data/g-kentei.json"};
+const EXAMS = {};
+const NEW_DAYS = 30; // この日数以内に追加された問題を「新着」とする
+
+/* ============ 保存（この端末のブラウザに記録） ============ */
+const KEY = "aiken-trainer:v1";
+let store = {exam:"genai", rec:{}, days:[]};
+try{ const s = localStorage.getItem(KEY); if(s) store = Object.assign(store, JSON.parse(s)); }catch(e){}
+function save(){ try{ localStorage.setItem(KEY, JSON.stringify(store)); }catch(e){} }
+
+const today = () => new Date().toLocaleDateString("sv-SE");
+function markDay(){ const d=today(); if(!store.days.includes(d)){ store.days.push(d); save(); } }
+function streak(){
+  const set=new Set(store.days); let n=0; const d=new Date();
+  if(!set.has(d.toLocaleDateString("sv-SE"))) d.setDate(d.getDate()-1);
+  while(set.has(d.toLocaleDateString("sv-SE"))){ n++; d.setDate(d.getDate()-1); }
+  return n;
+}
+
+const exam = () => EXAMS[store.exam];
+const recOf = id => store.rec[id] || {c:0,w:0,last:null};
+function shuffle(a){ a=a.slice(); for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];} return a; }
+function prep(q){ const idx=shuffle([0,1,2,3]); return {...q, opts:idx.map(i=>q.o[i]), ans:idx.indexOf(q.a)}; }
+
+/* ============ 画面 ============ */
+const app = document.getElementById("app");
+let S = null, timerId = null;
+
+function home(){
+  clearInterval(timerId);
+  const ex = exam(), qs = ex.questions;
+  const tried = qs.filter(q=>store.rec[q.id]);
+  let c=0,t=0; tried.forEach(q=>{const r=recOf(q.id); c+=r.c; t+=r.c+r.w;});
+  const weak = qs.filter(q=>recOf(q.id).last===false);
+  const limit = Date.now()-NEW_DAYS*86400000;
+  const fresh = qs.filter(q=>q.added && new Date(q.added).getTime()>=limit && !store.rec[q.id]);
+
+  const stamps = ex.chapters.map(ch=>{
+    const cq = qs.filter(q=>q.ch===ch.n);
+    const m = cq.filter(q=>recOf(q.id).last===true).length;
+    const pct = cq.length? Math.round(m/cq.length*100):0;
+    const cls = pct===100?"full":(pct===0?"empty":"");
+    return `<button class="stamp" data-ch="${ch.n}">
+      <span class="seal ${cls}">第${ch.n}章<br>${pct}%</span>
+      <span><span class="t">${ch.title}</span><br><span class="p">${m} / ${cq.length}問 マスター</span></span>
+    </button>`;
+  }).join("");
+
+  const body = qs.length ? `
+    <h2>スタンプ帳</h2>
+    <p class="hint">章をタップするとその章だけ解けます。直近で正解した問題が「マスター」になります。</p>
+    <div class="stamps">${stamps}</div>
+    <h2>学習モード</h2>
+    <div class="modes">
+      <button class="mode" data-mode="random"><span><b>ランダム10問</b><small>すきま時間に全範囲から</small></span><span class="n">10</span></button>
+      <button class="mode" data-mode="weak" ${weak.length?"":"disabled"}><span><b>間違えた問題を復習</b><small>${weak.length?"前回まちがえた問題だけ":"まちがえた問題はまだありません"}</small></span><span class="n">${weak.length}</span></button>
+      <button class="mode" data-mode="fresh" ${fresh.length?"":"disabled"}><span><b>新着問題</b><small>${fresh.length?"最近追加された、まだ解いていない問題":"新しい問題はありません"}</small></span><span class="n">${fresh.length}</span></button>
+      <button class="mode" data-mode="mock"><span><b>模擬テスト</b><small>${Math.min(ex.mockCount,qs.length)}問・${ex.mockMin}分。答えは最後にまとめて表示</small></span><span class="n">${Math.min(ex.mockCount,qs.length)}</span></button>
+    </div>` : `<h2>準備中</h2><div class="empty-note">この試験の問題はまだ入っていません。<br>Claude Codeで <code>/new-questions</code> を実行すると追加されます。</div>`;
+
+  app.innerHTML = `
+    <div class="bar"><h1>AI検定トレーナー</h1>
+      <select id="examSel" aria-label="試験を選ぶ">
+        ${Object.entries(EXAMS).map(([k,v])=>`<option value="${k}" ${k===store.exam?"selected":""}>${v.name}</option>`).join("")}
+      </select></div>
+    <section class="cover">
+      <p class="exam">${ex.name}</p>
+      <p class="sub">${ex.sub}・収録${qs.length}問${ex.updated?"・更新 "+ex.updated:""}</p>
+      <div class="stats">
+        <div><b>${t}</b><span>解いた回数</span></div>
+        <div><b>${t?Math.round(c/t*100):0}%</b><span>正答率</span></div>
+        <div><b>${streak()}日</b><span>連続学習</span></div>
+      </div>
+    </section>
+    ${body}
+    <div class="foot"><span>記録はこの端末に保存されます</span><button id="reset">記録をリセット</button></div>`;
+
+  document.getElementById("examSel").onchange = e=>{ store.exam=e.target.value; save(); home(); };
+  document.getElementById("reset").onclick = ()=>{
+    if(confirm(`${ex.name}の学習記録をすべて消去します。よろしいですか？`)){
+      qs.forEach(q=>delete store.rec[q.id]); save(); home();
+    }};
+  app.querySelectorAll("[data-ch]").forEach(b=>b.onclick=()=>{
+    const n=+b.dataset.ch; start(shuffle(qs.filter(q=>q.ch===n)), `第${n}章 ${ex.chapters[n-1].short}`, false);
+  });
+  app.querySelectorAll("[data-mode]").forEach(b=>b.onclick=()=>{
+    const m=b.dataset.mode;
+    if(m==="random") start(shuffle(qs).slice(0,10),"ランダム10問",false);
+    if(m==="weak") start(shuffle(weak),"復習",false);
+    if(m==="fresh") start(shuffle(fresh),"新着問題",false);
+    if(m==="mock") start(shuffle(qs).slice(0,ex.mockCount),"模擬テスト",true);
+  });
+  window.scrollTo(0,0);
+}
+
+function start(list,label,isMock){
+  S = {list:list.map(prep), i:0, label, mock:isMock, answers:[], picked:null};
+  if(isMock){
+    S.endAt = Date.now()+exam().mockMin*60000;
+    timerId = setInterval(tick,1000);
+  }
+  quiz();
+}
+
+function tick(){
+  const el=document.getElementById("timer"); const left=Math.max(0,S.endAt-Date.now());
+  if(el){ const m=Math.floor(left/60000), s=Math.floor(left%60000/1000);
+    el.textContent=`残り ${m}:${String(s).padStart(2,"0")}`; el.classList.toggle("low",left<180000); }
+  if(left<=0){ clearInterval(timerId); finish(); }
+}
+
+function quiz(){
+  const q=S.list[S.i], n=S.list.length, done=S.picked!==null;
+  const opts=q.opts.map((o,k)=>{
+    let cls="";
+    if(done && !S.mock){ if(k===q.ans) cls="ok"; else if(k===S.picked) cls="ng"; }
+    return `<button class="opt ${cls}" data-k="${k}" ${done?"disabled":""}><span class="k">${"ABCD"[k]}</span><span>${o}</span></button>`;
+  }).join("");
+  const right = S.picked===q.ans;
+  const exp = (done && !S.mock) ? `<div class="explain ${right?"":"bad"}"><b>${right?"正解":"不正解　正解は "+"ABCD"[q.ans]}</b>${q.e}</div>` : "";
+  const last = S.i===n-1;
+  app.innerHTML = `
+    <div class="qhead"><span>${S.label}　${S.i+1} / ${n}</span>${S.mock?'<span class="timer" id="timer"></span>':`<span>第${q.ch}章</span>`}</div>
+    <div class="progress"><i style="width:${(S.i)/n*100}%"></i></div>
+    <p class="qtext">${q.q}</p>
+    <div class="opts">${opts}</div>
+    ${exp}
+    <div class="actions">
+      <button class="btn ghost" id="quit">中断する</button>
+      ${done && !S.mock ? `<button class="btn" id="next">${last?"結果を見る":"次の問題"}</button>`:""}
+    </div>`;
+  if(S.mock) tick();
+  app.querySelectorAll(".opt").forEach(b=>b.onclick=()=>answer(+b.dataset.k));
+  document.getElementById("quit").onclick=()=>{ if(confirm("中断してホームに戻りますか？（ここまでの回答は記録されます）")) home(); };
+  const nx=document.getElementById("next"); if(nx){ nx.onclick=next; nx.focus(); }
+  window.scrollTo(0,0);
+}
+
+function answer(k){
+  const q=S.list[S.i]; S.picked=k; const ok=k===q.ans;
+  S.answers.push({q, picked:k, ok});
+  const r=recOf(q.id); ok?r.c++:r.w++; r.last=ok; store.rec[q.id]=r; markDay(); save();
+  if(S.mock) next(); else quiz();
+}
+
+function next(){
+  S.picked=null;
+  if(S.i<S.list.length-1){ S.i++; quiz(); } else finish();
+}
+
+function finish(){
+  clearInterval(timerId);
+  const n=S.list.length, c=S.answers.filter(a=>a.ok).length, pct=Math.round(c/n*100);
+  const wrong=S.answers.filter(a=>!a.ok);
+  const unanswered = n - S.answers.length;
+  const msg = S.mock ? (pct>=80?"本番の合格ラインに十分届く水準です。":"まちがえた問題を復習して、もう一度挑戦しましょう。") : (wrong.length?"まちがえた問題は「復習」モードにたまっています。":"全問正解です。");
+  app.innerHTML = `
+    <div class="qhead"><span>${S.label} の結果</span></div>
+    <div class="score"><div class="big">${c} / ${n}</div><p>正答率 ${pct}%${unanswered?`（時間切れで${unanswered}問未回答）`:""}<br>${msg}</p></div>
+    ${wrong.length?`<h2>まちがえた問題</h2><div class="review">${wrong.map(a=>`
+      <div class="rv"><div class="q">${a.q.q}</div><div class="a">正解：${a.q.opts[a.q.ans]}</div><div class="e">${a.q.e}</div></div>`).join("")}</div>`:""}
+    <div class="actions"><button class="btn" id="home">ホームに戻る</button></div>`;
+  document.getElementById("home").onclick=home;
+  window.scrollTo(0,0);
+}
+
+async function boot(){
+  app.innerHTML = '<p class="hint">問題を読み込んでいます…</p>';
+  await Promise.all(Object.entries(EXAM_FILES).map(async([k,path])=>{
+    try{
+      const r = await fetch(path+"?v="+Date.now(), {cache:"no-store"});
+      const d = await r.json();
+      d.questions = (d.questions||[]).filter(q=>q.status!=="draft");
+      EXAMS[k] = d;
+    }catch(e){ EXAMS[k] = {name:k, sub:"読み込みに失敗しました", chapters:[], questions:[], mockCount:0, mockMin:0}; }
+  }));
+  if(!EXAMS[store.exam]) store.exam = "genai";
+  home();
+}
+boot();
+</script>
+</body>
+</html>
