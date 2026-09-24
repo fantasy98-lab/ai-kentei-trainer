@@ -735,6 +735,163 @@
    "src": [],
    "added": "2026-09-23",
    "tags": []
+  },
+  {
+   "id": "g3-09",
+   "ch": 3,
+   "q": "2025年5月に発表された、効果音やセリフなどの音声もあわせて生成できる動画生成AI「Veo 3」を開発したのはどこ？",
+   "o": [
+    "Google DeepMind",
+    "OpenAI",
+    "Meta",
+    "Anthropic"
+   ],
+   "a": 0,
+   "e": "Veo 3はGoogle DeepMindが開発した動画生成AIで、映像に合わせて音声もネイティブに同時生成できるのが特徴です（音声付きの動画生成は、MetaのMovie GenやOpenAIのSora 2なども対応しています）。動画生成AIというとOpenAIの「Sora」と混同しやすいですが、開発元は異なります。",
+   "oe": [
+    "正解。Veo 3はGoogle DeepMindが2025年5月のGoogle I/Oで発表した動画生成AIで、効果音やセリフなどの音声を映像に合わせてネイティブに同時生成できる。",
+    "OpenAIは動画生成AI「Sora」を開発した企業で、Veo 3の開発元ではない。音声も同時に生成できる後継の「Sora 2」が発表されたのは、Veo 3（2025年5月）より後の2025年9月。",
+    "Metaは動画生成AI「Movie Gen」を開発する企業で、Veo 3の開発元ではない。Movie Genは2024年10月発表で、映像に同期した音声も生成できる点はVeo 3と似ているが、開発元はGoogle DeepMindではなくMeta。",
+    "Anthropicは「Claude」などテキストを中心に扱うAIを開発する企業で、動画生成AIのVeoとは関係ない。"
+   ],
+   "tip": "動画生成AIは「Veo＝Google DeepMind」「Sora＝OpenAI」「Movie Gen＝Meta」と開発元をセットで覚える。",
+   "src": [
+    "https://deepmind.google/models/veo/",
+    "https://blog.google/innovation-and-ai/products/google-io-2025-all-our-announcements/",
+    "https://openai.com/index/sora-2/",
+    "https://ai.meta.com/blog/movie-gen-media-foundation-models-generative-ai-video/",
+    "https://cdn.openai.com/pdf/50d5973c-c4ff-4c2d-986f-c72b5d0ff069/sora_2_system_card.pdf"
+   ],
+   "added": "2026-09-23",
+   "tags": [
+    "2026改訂",
+    "動画生成AI"
+   ]
+  },
+  {
+   "id": "g3-10",
+   "ch": 3,
+   "q": "RAG（検索拡張生成）という名前と手法を2020年に論文で提案したのは、どこの研究者たち？",
+   "o": [
+    "Facebook AI Research（現在のMeta）",
+    "OpenAI",
+    "Google DeepMind",
+    "Anthropic"
+   ],
+   "a": 0,
+   "e": "RAGは2020年、Facebook AI Research（現在のMeta）のPatrick Lewisらが発表した論文「Retrieval-Augmented Generation for Knowledge-Intensive NLP Tasks」で提案された手法です（一部の著者はロンドン大学ユニバーシティ・カレッジやニューヨーク大学にも所属）。ChatGPTの公開（2022年11月）より前から存在する技術で、OpenAIが考案したものではありません。",
+   "oe": [
+    "正解。RAGは2020年にFacebook AI Research（現在のMeta）のPatrick Lewisらが論文で提案した手法。",
+    "OpenAIはChatGPTなどを開発する企業だが、RAGの提案者ではない。RAG論文（2020年5月）はChatGPT公開（2022年11月）より前に発表されており、ChatGPTで有名になった技術だからOpenAIが考えたはず、というのは誤り。",
+    "Google DeepMindではなく、Googleの別部門であるGoogle Researchが2020年2月に検索拡張型の言語モデル「REALM」を発表している。REALMはRAGより少し早いが名称も所属も異なる別の研究で、RAGを提案したのはFacebook AI Research。",
+    "Anthropicは2021年に設立された企業で、RAGが提案された2020年当時はまだ存在していなかった。"
+   ],
+   "tip": "RAG＝Facebook AI Research（現Meta）、似た時期のREALM＝Google Research、と混同しないように区別して覚える。",
+   "src": [
+    "https://arxiv.org/abs/2005.11401",
+    "https://ai.meta.com/research/publications/retrieval-augmented-generation-for-knowledge-intensive-nlp-tasks/",
+    "https://arxiv.org/abs/2002.08909",
+    "https://research.google/blog/realm-integrating-retrieval-into-language-representation-models/",
+    "https://www.anthropic.com/events/builder-summit-bengaluru",
+    "https://openai.com/index/chatgpt/"
+   ],
+   "added": "2026-09-23",
+   "tags": [
+    "2026改訂",
+    "RAG"
+   ]
+  },
+  {
+   "id": "g3-11",
+   "ch": 3,
+   "q": "RAGの仕組みで、検索対象の文書を分割した小さな単位のことを何と呼ぶ？",
+   "o": [
+    "チャンク",
+    "トークン",
+    "エポック",
+    "パラメータ"
+   ],
+   "a": 0,
+   "e": "RAGでは文書をチャンクという単位に分割し、それぞれを埋め込みでベクトル化してベクトルデータベースに格納します。トークンはLLMが文章を処理する際の単位で、チャンクとは役割が異なります。",
+   "oe": [
+    "正解。RAGでは検索対象の文書をチャンクという小さな単位に分割し、埋め込みでベクトル化してベクトルデータベースに格納する。",
+    "トークンはLLMが文章を処理する際の単位のこと。文書を検索用に分割する「チャンク」とは役割が異なるため、この問いの答えにはならない。",
+    "エポックは、学習データセット全体を1回処理する、学習（訓練）プロセスの単位のこと。RAGの文書分割とは関係のない用語。",
+    "パラメータは、モデルが学習によって獲得する重みやバイアスなどの数値のこと。モデルの規模を示す指標として使われ、文書を分割する単位ではない。"
+   ],
+   "tip": "チャンク＝文書の分割単位、トークン＝LLMの処理単位、エポック＝学習の周回数、パラメータ＝モデルの重み、と役割ごとに分けて覚える。",
+   "src": [
+    "https://aws.amazon.com/what-is/retrieval-augmented-generation/",
+    "https://learn.microsoft.com/en-us/azure/search/vector-search-how-to-chunk-documents",
+    "https://developers.google.com/machine-learning/glossary/fundamentals"
+   ],
+   "added": "2026-09-23",
+   "tags": [
+    "2026改訂",
+    "RAG"
+   ]
+  },
+  {
+   "id": "g3-12",
+   "ch": 3,
+   "q": "Anthropicが説明する「ワークフロー」と「エージェント」の違いとして正しいものはどれ？",
+   "o": [
+    "ワークフローはあらかじめ定義された手順でLLMとツールを動かし、エージェントはLLM自身が処理手順を動的に決める",
+    "ワークフローは人が一切関与しない完全自動の仕組みで、エージェントは常に人が手動で操作する仕組みである",
+    "ワークフローとエージェントはまったく同じ意味で使われる言葉である",
+    "ワークフローは画像生成専用、エージェントはテキスト生成専用の仕組みである"
+   ],
+   "a": 0,
+   "e": "Anthropicの公式記事「Building Effective Agents」では、手順があらかじめ固定された「ワークフロー」と、LLM自身が計画やツールの使い方を決める「エージェント」を区別しています。両者の違いは「手順を誰が決めるか」にあります。",
+   "oe": [
+    "正解。Anthropicの記事では、あらかじめ決められた手順で動くのが「ワークフロー」、LLM自身が手順を動的に決めるのが「エージェント」と説明されている。",
+    "ワークフローとエージェントの違いは、人の関与の有無ではなく「手順を誰が決めるか」にある。Anthropicの記事では、エージェントもチェックポイントや行き詰まったときに一時停止して人間のフィードバックを求めることができると説明されており、「常に人が手動で操作する」仕組みではない。",
+    "ワークフローとエージェントはAnthropicの記事で明確に区別される別の概念で、同じ意味の言葉ではない。",
+    "ワークフローもエージェントも、画像生成専用やテキスト生成専用の仕組みではない。Anthropicの記事では、どちらもLLMとツールを組み合わせた「エージェント的システム（agentic systems）」の2つの種類として説明されている。"
+   ],
+   "tip": "ワークフロー＝手順があらかじめ決まっている、エージェント＝LLMが自分で判断する、と対で覚える。",
+   "src": [
+    "https://www.anthropic.com/research/building-effective-agents"
+   ],
+   "added": "2026-09-23",
+   "tags": [
+    "2026改訂",
+    "AIエージェント"
+   ]
+  },
+  {
+   "id": "g3-13",
+   "ch": 3,
+   "q": "AIエージェントがGoogleドライブやSlack、GitHubなどの外部ツール・データと接続するための共通規格「MCP」を、2024年11月に発表してオープンソースで公開したのはどこ？",
+   "o": [
+    "Anthropic",
+    "OpenAI",
+    "Google",
+    "Microsoft"
+   ],
+   "a": 0,
+   "e": "MCP（Model Context Protocol）は2024年11月にAnthropicがオープンソースで公開した規格です。AIエージェントと外部ツールをつなぐ共通の接続方式として、2026年シラバスに新たに追加されました。その後OpenAIやGoogle、Microsoftの製品も対応し、2025年12月にはLinux Foundation傘下のAgentic AI Foundationへ寄贈されています。",
+   "oe": [
+    "正解。MCPは2024年11月にAnthropicがオープンソースで公開した規格。",
+    "OpenAIはMCPを発表・公開した側ではなく、後から自社のAgents SDKなどにMCP対応を追加した企業。2025年12月にMCPが寄贈されたAgentic AI Foundationでは、Anthropic・Blockとともに共同設立者になっているが、MCPを最初に発表したのはAnthropic。",
+    "GoogleもMCPを発表・公開した側ではなく、2025年5月のGoogle I/Oで、Gemini APIのSDKにMCP対応を追加したと発表した企業。",
+    "MicrosoftもMCPを発表・公開した側ではなく、2025年3月にCopilot StudioへMCP対応を追加した企業。2025年12月にMCPが寄贈されたAgentic AI Foundationでは、GoogleやAWSなどと並ぶ支援企業の一つ（共同設立はAnthropic・Block・OpenAI）。"
+   ],
+   "tip": "MCPを発表・公開したのはAnthropic（2024年11月）。OpenAI・Google・Microsoftは後から「対応した」側、と役割を区別して覚える。",
+   "src": [
+    "https://www.anthropic.com/news/model-context-protocol",
+    "https://blog.modelcontextprotocol.io/posts/2025-12-09-mcp-joins-agentic-ai-foundation/",
+    "https://www.microsoft.com/en-us/copilot/blog/copilot-studio/introducing-model-context-protocol-mcp-in-copilot-studio-simplified-integration-with-ai-apps-and-agents/",
+    "https://openai.github.io/openai-agents-python/mcp/",
+    "https://blog.google/innovation-and-ai/products/google-io-2025-all-our-announcements/"
+   ],
+   "added": "2026-09-23",
+   "tags": [
+    "2026改訂",
+    "AIエージェント",
+    "MCP"
+   ]
   }
- ]
+ ],
+ "updated": "2026-09-24"
 }
