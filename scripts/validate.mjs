@@ -26,7 +26,16 @@ for (const f of files) {
     if (![0, 1, 2, 3].includes(q.a)) err("a（正解番号）は0〜3です");
     if (!q.e || q.e.length < 15) err("解説が短すぎます");
     if (!/^\d{4}-\d{2}-\d{2}$/.test(q.added || "")) err("added は YYYY-MM-DD 形式にしてください");
-    if (q.status === "draft" && (!Array.isArray(q.src) || !q.src.length)) err("新規問題には src（出典URL）が必要です");
+    if (q.oe !== undefined) {
+      if (!Array.isArray(q.oe) || q.oe.length !== 4) err("oe（選択肢ごとの解説）は選択肢と同じ4つ必要です");
+      else q.oe.forEach((t, k) => { if (typeof t !== "string" || t.length < 10) err(`oe[${k}] の解説が短すぎます`); });
+    }
+    if (q.tip !== undefined && (typeof q.tip !== "string" || q.tip.length < 5)) err("tip（覚えるコツ）が短すぎます");
+    if (q.status === "draft") {
+      if (!Array.isArray(q.src) || !q.src.length) err("新規・更新の下書きには src（出典URL）が必要です");
+      if (!q.oe) err("新規・更新の下書きには oe（選択肢ごとの解説）が必要です");
+    }
+    if (q.update) return; // 既存問題の更新下書きは重複チェックの対象外
     const key = norm(q.q || "");
     if (seenText.has(key)) err(`問題文が ${seenText.get(key)} と重複しています`);
     else seenText.set(key, at);

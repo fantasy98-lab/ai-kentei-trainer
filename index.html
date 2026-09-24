@@ -89,6 +89,19 @@ h2{font-family:"Kaisei Decol",serif;font-size:1.1rem;margin:28px 0 4px}
 .explain{margin-top:16px;background:var(--surface);border-left:4px solid var(--ok);border-radius:0 12px 12px 0;padding:12px 14px;font-size:.92rem}
 .explain.bad{border-left-color:var(--ng)}
 .explain b{display:block;margin-bottom:4px}
+.more{margin-top:12px;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:4px 14px 10px;font-size:.9rem}
+.more summary{cursor:pointer;font-weight:700;padding:8px 0;list-style:none}
+.more summary::-webkit-details-marker{display:none}
+.more summary::before{content:"▸ ";color:var(--muted)}
+.more[open] summary::before{content:"▾ "}
+.oe{display:grid;gap:10px}
+.oe div{border-top:1px solid var(--line);padding-top:8px}
+.oe .h{font-weight:700;display:flex;gap:6px;align-items:baseline}
+.oe .mk{flex:none;font-size:.78rem;padding:0 6px;border-radius:6px;color:var(--surface)}
+.oe .mk.ok{background:var(--ok)}.oe .mk.ng{background:var(--ng)}
+.oe .you{font-size:.75rem;color:var(--muted);font-weight:500}
+.tip{margin-top:10px;padding:8px 10px;border-radius:8px;background:var(--bg)}
+.tip b{color:var(--stamp)}
 .actions{display:flex;gap:10px;margin-top:18px}
 .btn{flex:1;border:none;border-radius:12px;padding:14px;font-weight:700;background:var(--cover);color:#fff}
 .btn.ghost{background:transparent;border:1.5px solid var(--line);color:var(--ink);font-weight:500}
@@ -138,9 +151,15 @@ function streak(){
 const exam = () => EXAMS[store.exam];
 const recOf = id => store.rec[id] || {c:0,w:0,last:null};
 function shuffle(a){ a=a.slice(); for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];} return a; }
-function prep(q){ const idx=shuffle([0,1,2,3]); return {...q, opts:idx.map(i=>q.o[i]), ans:idx.indexOf(q.a)}; }
+function prep(q){ const idx=shuffle([0,1,2,3]); return {...q, opts:idx.map(i=>q.o[i]), oes:q.oe?idx.map(i=>q.oe[i]):null, ans:idx.indexOf(q.a)}; }
 
 /* ============ 画面 ============ */
+function detail(q, picked, open){
+  if(!q.oes && !q.tip) return "";
+  const rows = q.oes ? q.oes.map((t,k)=>`<div><span class="h"><span class="mk ${k===q.ans?"ok":"ng"}">${k===q.ans?"正解":"誤り"}</span>${"ABCD"[k]}. ${q.opts[k]}${k===picked&&k!==q.ans?' <span class="you">← あなたの回答</span>':""}</span>${t}</div>`).join("") : "";
+  const tip = q.tip ? `<div class="tip"><b>覚えるコツ</b>　${q.tip}</div>` : "";
+  return `<details class="more" ${open?"open":""}><summary>選択肢ごとの解説</summary><div class="oe">${rows}</div>${tip}</details>`;
+}
 const app = document.getElementById("app");
 let S = null, timerId = null;
 
@@ -235,7 +254,7 @@ function quiz(){
     return `<button class="opt ${cls}" data-k="${k}" ${done?"disabled":""}><span class="k">${"ABCD"[k]}</span><span>${o}</span></button>`;
   }).join("");
   const right = S.picked===q.ans;
-  const exp = (done && !S.mock) ? `<div class="explain ${right?"":"bad"}"><b>${right?"正解":"不正解　正解は "+"ABCD"[q.ans]}</b>${q.e}</div>` : "";
+  const exp = (done && !S.mock) ? `<div class="explain ${right?"":"bad"}"><b>${right?"正解":"不正解　正解は "+"ABCD"[q.ans]}</b>${q.e}</div>${detail(q,S.picked,true)}` : "";
   const last = S.i===n-1;
   app.innerHTML = `
     <div class="qhead"><span>${S.label}　${S.i+1} / ${n}</span>${S.mock?'<span class="timer" id="timer"></span>':`<span>第${q.ch}章</span>`}</div>
@@ -276,7 +295,7 @@ function finish(){
     <div class="qhead"><span>${S.label} の結果</span></div>
     <div class="score"><div class="big">${c} / ${n}</div><p>正答率 ${pct}%${unanswered?`（時間切れで${unanswered}問未回答）`:""}<br>${msg}</p></div>
     ${wrong.length?`<h2>まちがえた問題</h2><div class="review">${wrong.map(a=>`
-      <div class="rv"><div class="q">${a.q.q}</div><div class="a">正解：${a.q.opts[a.q.ans]}</div><div class="e">${a.q.e}</div></div>`).join("")}</div>`:""}
+      <div class="rv"><div class="q">${a.q.q}</div><div class="a">正解：${a.q.opts[a.q.ans]}</div><div class="e">${a.q.e}</div>${detail(a.q,a.picked,false)}</div>`).join("")}</div>`:""}
     <div class="actions"><button class="btn" id="home">ホームに戻る</button></div>`;
   document.getElementById("home").onclick=home;
   window.scrollTo(0,0);

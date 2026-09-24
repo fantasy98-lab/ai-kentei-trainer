@@ -28,6 +28,7 @@
 | 章を指定せずおまかせ | `/new-questions genai` |
 | 下書きを承認して公開 | `/approve all-pass` または `/approve g3-rag-202609-01,g3-rag-202609-03` |
 | シラバスや法律の変更を確認 | `/check-syllabus genai` |
+| 既存問題に選択肢ごとの解説を追加 | `/enrich-explanations genai 2 10` |
 
 新しく追加した問題は、アプリの「新着問題」モードに30日間表示されます。
 

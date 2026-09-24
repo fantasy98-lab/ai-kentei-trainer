@@ -12,7 +12,8 @@
 - `scripts/merge-drafts.mjs` … 承認済み下書きを本番に統合
 
 ## 基本の流れ
-`/new-questions` → ユーザーが内容を確認 → `/approve` → git push でアプリに反映
+- 新しい問題: `/new-questions` → ユーザーが内容を確認 → `/approve` → git push でアプリに反映
+- 既存問題の解説を充実: `/enrich-explanations` → ユーザーが確認 → `/approve` → git push
 
 ## ルール
 - 本番ファイル（`data/genai.json` 等）はユーザーの承認なしに書き換えない。
@@ -20,6 +21,8 @@
 - 変更後は必ず `node scripts/validate.mjs` を通す。
 - `git push` の前にユーザーに確認する。
 - 解説・問題文は、AIの初学者がスマホで読むことを想定して平易な日本語で書く。
+- 解説は3段構成: `e`（メイン解説）、`oe`（選択肢ごとの解説、`o` と同じ順で4つ）、`tip`（覚えるコツ、任意）。新規問題には `oe` を必ず付ける。
+- 既存問題の解説の充実は `/enrich-explanations` で行う（`"update": true` の下書きとして作り、承認後に反映）。
 
 ## 試験ごとの情報源
 ### 生成AIパスポート（genai）
