@@ -149,6 +149,8 @@ function streak(){
 }
 
 const exam = () => EXAMS[store.exam];
+// 模擬テストの制限時間（分）: 本番のペース（mockMin ÷ mockCount）× 実際の問題数を切り上げ
+const mockMinutes = (ex,n) => ex.mockCount ? Math.ceil(ex.mockMin*n/ex.mockCount) : 0;
 const recOf = id => store.rec[id] || {c:0,w:0,last:null};
 function shuffle(a){ a=a.slice(); for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];} return a; }
 function prep(q){ const idx=shuffle([0,1,2,3]); return {...q, opts:idx.map(i=>q.o[i]), oes:q.oe?idx.map(i=>q.oe[i]):null, ans:idx.indexOf(q.a)}; }
@@ -192,7 +194,7 @@ function home(){
       <button class="mode" data-mode="random"><span><b>ランダム10問</b><small>すきま時間に全範囲から</small></span><span class="n">10</span></button>
       <button class="mode" data-mode="weak" ${weak.length?"":"disabled"}><span><b>間違えた問題を復習</b><small>${weak.length?"前回まちがえた問題だけ":"まちがえた問題はまだありません"}</small></span><span class="n">${weak.length}</span></button>
       <button class="mode" data-mode="fresh" ${fresh.length?"":"disabled"}><span><b>新着問題</b><small>${fresh.length?"最近追加された、まだ解いていない問題":"新しい問題はありません"}</small></span><span class="n">${fresh.length}</span></button>
-      <button class="mode" data-mode="mock"><span><b>模擬テスト</b><small>${Math.min(ex.mockCount,qs.length)}問・${ex.mockMin}分。答えは最後にまとめて表示</small></span><span class="n">${Math.min(ex.mockCount,qs.length)}</span></button>
+      <button class="mode" data-mode="mock"><span><b>模擬テスト</b><small>${Math.min(ex.mockCount,qs.length)}問・${mockMinutes(ex,Math.min(ex.mockCount,qs.length))}分。答えは最後にまとめて表示</small></span><span class="n">${Math.min(ex.mockCount,qs.length)}</span></button>
     </div>` : `<h2>準備中</h2><div class="empty-note">この試験の問題はまだ入っていません。<br>Claude Codeで <code>/new-questions</code> を実行すると追加されます。</div>`;
 
   app.innerHTML = `
@@ -233,7 +235,7 @@ function home(){
 function start(list,label,isMock){
   S = {list:list.map(prep), i:0, label, mock:isMock, answers:[], picked:null};
   if(isMock){
-    S.endAt = Date.now()+exam().mockMin*60000;
+    S.endAt = Date.now()+mockMinutes(exam(),list.length)*60000;
     timerId = setInterval(tick,1000);
   }
   quiz();
