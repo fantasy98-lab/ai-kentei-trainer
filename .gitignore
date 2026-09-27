@@ -1,2 +1,5 @@
 .DS_Store
 node_modules/
+
+# 手元だけに置く資料（公式シラバスPDFなど）。GitHubには送らない
+local-docs/
