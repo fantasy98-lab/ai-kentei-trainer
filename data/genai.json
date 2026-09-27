@@ -1326,7 +1326,7 @@
     "Microsoft"
    ],
    "a": 0,
-   "e": "MCP（Model Context Protocol）は2024年11月にAnthropicがオープンソースで公開した規格です。AIエージェントと外部ツールをつなぐ共通の接続方式として、2026年シラバスに新たに追加されました。その後OpenAIやGoogle、Microsoftの製品も対応し、2025年12月にはLinux Foundation傘下のAgentic AI Foundationへ寄贈されています。",
+   "e": "MCP（Model Context Protocol）は2024年11月にAnthropicがオープンソースで公開した規格です。その後OpenAIやGoogle、Microsoftの製品も対応し、2025年12月にはLinux Foundation傘下のAgentic AI Foundationへ寄贈されています。",
    "oe": [
     "正解。MCPは2024年11月にAnthropicがオープンソースで公開した規格。",
     "OpenAIはMCPを発表・公開した側ではなく、後から自社のAgents SDKなどにMCP対応を追加した企業。2025年12月にMCPが寄贈されたAgentic AI Foundationでは、Anthropic・Blockとともに共同設立者になっているが、MCPを最初に発表したのはAnthropic。",
@@ -1571,8 +1571,7 @@
    "tip": "「AlexNet」「2012年」「ビッグデータ」の組み合わせで第三次AIブームを覚える。",
    "src": [
     "https://image-net.org/challenges/LSVRC/2012/results.html",
-    "https://www.soumu.go.jp/johotsusintokei/whitepaper/ja/h28/html/nc142120.html",
-    "https://en.wikipedia.org/wiki/AlexNet"
+    "https://www.soumu.go.jp/johotsusintokei/whitepaper/ja/h28/html/nc142120.html"
    ],
    "added": "2026-09-27",
    "tags": []
