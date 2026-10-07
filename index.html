@@ -8,6 +8,10 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Kaisei+Decol:wght@500;700&family=Zen+Kaku+Gothic+New:wght@400;500;700&display=swap" rel="stylesheet">
+<!-- 数式表示（KaTeX）: $...$ は文中の数式、$$...$$ は独立した行の数式 -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.19.0/katex.min.css" integrity="sha512-ShgGHY1DxXgJ048WLBq4a1WB85Ppw9pb59F5waDdd/mAzSuKfCg4pzrsIECClh+1IhwY3ux6e4ZEbjw15y9kGQ==" crossorigin="anonymous" referrerpolicy="no-referrer">
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.19.0/katex.min.js" integrity="sha512-PMGpBvoAMUyHk238o5oDsOos5wAGWnc02JgF5lk5T5Nt2K4A2RHW0NyL1jd+IRSh0DmxcQNu0j/OhhrTDfaw0Q==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.19.0/contrib/auto-render.min.js" integrity="sha512-0HzJcHCD+wBh9kNUUcm3DWH9IbNDfudsYyMD5EHwSuFK6aEsaa/UEPqqk4t0pm4bbmwR6A11yNsD7Q+nz6XF+Q==" crossorigin="anonymous" referrerpolicy="no-referrer" onload="math(app)"></script>
 <style>
 :root{
   --bg:#E9EDF2; --surface:#FFFFFF; --ink:#1C2340; --muted:#5B6478; --line:#CBD2DD;
@@ -119,6 +123,10 @@ h2{font-family:"Kaisei Decol",serif;font-size:1.1rem;margin:28px 0 4px}
 .rv .e{color:var(--muted);margin-top:4px}
 .foot{margin-top:28px;display:flex;justify-content:space-between;align-items:center;font-size:.8rem;color:var(--muted)}
 .foot button{background:none;border:none;color:var(--muted);text-decoration:underline;padding:4px}
+/* 数式: 長い数式はスマホの幅からはみ出さず、横にスクロールできるようにする */
+.opts>*,.oe>*,.oe .h>*,.review>*,.opt>span:last-child{min-width:0}
+.katex-display{overflow-x:auto;overflow-y:hidden;padding:2px 0;margin:.6em 0}
+.katex.wide{display:block;overflow-x:auto;overflow-y:hidden;padding:2px 0}
 .empty-note{background:var(--surface);border:1px dashed var(--line);border-radius:12px;padding:20px;text-align:center;color:var(--muted)}
 @media (prefers-reduced-motion: reduce){*{transition:none!important}}
 </style>
@@ -154,6 +162,29 @@ const mockMinutes = (ex,n) => ex.mockCount ? Math.ceil(ex.mockMin*n/ex.mockCount
 const recOf = id => store.rec[id] || {c:0,w:0,last:null};
 function shuffle(a){ a=a.slice(); for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];} return a; }
 function prep(q){ const idx=shuffle([0,1,2,3]); return {...q, opts:idx.map(i=>q.o[i]), oes:q.oe?idx.map(i=>q.oe[i]):null, ans:idx.indexOf(q.a)}; }
+
+/* ============ 数式（KaTeX） ============
+   問題文・選択肢・解説の $...$ と $$...$$ を数式として表示する。
+   数式を含まない画面では何もしないので、今の見た目は変わらない。 */
+function math(root){
+  if(!window.renderMathInElement || !root.textContent.includes("$")) return;
+  renderMathInElement(root, {
+    delimiters:[{left:"$$",right:"$$",display:true},{left:"$",right:"$",display:false}],
+    throwOnError:false
+  });
+  fitMath(root);
+  root.querySelectorAll("details").forEach(d=>d.addEventListener("toggle",()=>fitMath(d)));
+}
+// 文中の数式が幅に収まらないときだけ、独立した行にして横スクロールにする
+function fitMath(root){
+  root.querySelectorAll(".katex:not(.katex-display .katex)").forEach(k=>{
+    k.classList.remove("wide");
+    let box=k.parentElement;
+    while(box && getComputedStyle(box).display==="inline") box=box.parentElement;
+    if(box && box.clientWidth && k.getBoundingClientRect().right > box.getBoundingClientRect().right+1) k.classList.add("wide");
+  });
+}
+addEventListener("resize", ()=>fitMath(app));
 
 /* ============ 画面 ============ */
 function detail(q, picked, open){
@@ -268,6 +299,7 @@ function quiz(){
       <button class="btn ghost" id="quit">中断する</button>
       ${done && !S.mock ? `<button class="btn" id="next">${last?"結果を見る":"次の問題"}</button>`:""}
     </div>`;
+  math(app);
   if(S.mock) tick();
   app.querySelectorAll(".opt").forEach(b=>b.onclick=()=>answer(+b.dataset.k));
   document.getElementById("quit").onclick=()=>{ if(confirm("中断してホームに戻りますか？（ここまでの回答は記録されます）")) home(); };
@@ -299,6 +331,7 @@ function finish(){
     ${wrong.length?`<h2>まちがえた問題</h2><div class="review">${wrong.map(a=>`
       <div class="rv"><div class="q">${a.q.q}</div><div class="a">正解：${a.q.opts[a.q.ans]}</div><div class="e">${a.q.e}</div>${detail(a.q,a.picked,false)}</div>`).join("")}</div>`:""}
     <div class="actions"><button class="btn" id="home">ホームに戻る</button></div>`;
+  math(app);
   document.getElementById("home").onclick=home;
   window.scrollTo(0,0);
 }

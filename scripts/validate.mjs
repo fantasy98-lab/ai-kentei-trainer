@@ -31,6 +31,17 @@ for (const f of files) {
       else q.oe.forEach((t, k) => { if (typeof t !== "string" || t.length < 10) err(`oe[${k}] の解説が短すぎます`); });
     }
     if (q.tip !== undefined && (typeof q.tip !== "string" || q.tip.length < 5)) err("tip（覚えるコツ）が短すぎます");
+    // 数式の $ の数: $$...$$（独立した行）と $...$（文中）がそれぞれ閉じているか
+    const texts = [["q", q.q], ...(q.o || []).map((t, k) => [`o[${k}]`, t]), ["e", q.e],
+      ...(Array.isArray(q.oe) ? q.oe.map((t, k) => [`oe[${k}]`, t]) : []), ["tip", q.tip]];
+    for (const [name, t] of texts) {
+      if (typeof t !== "string" || !t.includes("$")) continue;
+      const s = t.replace(/\\\$/g, "");
+      const dd = (s.match(/\$\$/g) || []).length;
+      if (dd % 2) err(`${name} の $$ が閉じていません（$$ が ${dd} 個）`);
+      const d1 = (s.replace(/\$\$/g, "").match(/\$/g) || []).length;
+      if (!(dd % 2) && d1 % 2) err(`${name} の $ が閉じていません（$ が ${d1} 個。お金のドルは「ドル」と書く）`);
+    }
     if (q.status === "draft") {
       if (!Array.isArray(q.src) || !q.src.length) err("新規・更新の下書きには src（出典URL）が必要です");
       if (!q.oe) err("新規・更新の下書きには oe（選択肢ごとの解説）が必要です");
